@@ -1,0 +1,36 @@
+{
+    "name": "lemonphp/cli",
+    "type": "library",
+    "description": "The PHP micro-framework for command line tools base Symfony Components",
+    "keyworks": ["cli", "micro framework", "symfony components"],
+    "license": "MIT",
+    "homepage": "https://github.com/lemonphp/cli.git",
+    "support": {
+        "issues": "https://github.com/lemonphp/cli/issues",
+        "source": "https://github.com/lemonphp/cli"
+    },
+    "authors": [
+        {
+            "name": "Oanh Nguyen",
+            "email": "oanhnn.bk@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Lemon\\Cli\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "pimple/pimple": "^3.0",
+        "symfony/console": "^3.0",
+        "symfony/event-dispatcher": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.1.0"
+    },
+    "config": {
+        "bin-dir": "bin",
+        "preferred-install": "dist"
+    }
+}
