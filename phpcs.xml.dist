@@ -10,9 +10,7 @@
     <!-- inherit rules from: -->
     <rule ref="PSR2"/>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Squiz.Commenting.FileComment">
-        
-    </rule>
+    <!--<rule ref="Squiz.Commenting.FileComment"/>-->
     <rule ref="Generic.Commenting.Todo" />
  
     <!-- Paths to check -->

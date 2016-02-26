@@ -10,9 +10,6 @@
 
 namespace Lemon\Cli\Tests\Console\Command;
 
-use Symfony\Component\Console\Tester\CommandTester;
-use Lemon\Cli\Console\Command\GreetCommand;
-
 /**
  * Test GreetCommand
  */
@@ -28,7 +25,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * 
+     *
      */
     public function testGetService()
     {

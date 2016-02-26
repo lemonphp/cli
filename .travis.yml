@@ -16,7 +16,8 @@ install:
   - composer require satooshi/php-coveralls '~1.0'
 
 script:
-  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - php bin/phpcs
+  - php bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
-  - php vendor/bin/coveralls -v
+  - php bin/coveralls -v
