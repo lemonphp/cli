@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -11,18 +10,27 @@
 
 namespace Lemon\Cli\Tests\Provider;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Pimple\Container;
 use Lemon\Cli\Console\ContainerAwareApplication;
 use Lemon\Cli\Provider\ConsoleServiceProvider;
-use Pimple\Container;
 
+/**
+ * Test class ConsoleServiceProvider
+ */
 class ConsoleServiceProviderTest extends \PHPUnit_Framework_TestCase
 {
-
+    /**
+     * Test register method
+     */
     public function testRegister()
     {
         $container = new Container();
         $container['console.name'] = 'Test app';
         $container['console.version'] = '1.0.0';
+        $container['dispatcher'] = function () {
+            return new EventDispatcher();
+        };
 
         $this->assertFalse(isset($container['console']));
 
@@ -30,5 +38,6 @@ class ConsoleServiceProviderTest extends \PHPUnit_Framework_TestCase
         $provider->register($container);
 
         $this->assertTrue(isset($container['console']));
+        $this->assertInstanceOf(ContainerAwareApplication::class, $container['console']);
     }
 }

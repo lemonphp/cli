@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -16,6 +15,8 @@ use Pimple\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
+ * DispatcherServiceProvider
+ *
  * Registers EventDispatcher and related services with the Pimple Container
  */
 class DispatcherServiceProvider implements ServiceProviderInterface
@@ -28,7 +29,7 @@ class DispatcherServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple)
     {
-        $pimple['dispatcher'] = function() {
+        $pimple['dispatcher'] = function () {
             return new EventDispatcher();
         };
     }

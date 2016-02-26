@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -17,6 +16,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
+ * Class GreetCommand
+ *
  * Example command for testing purposes.
  */
 class GreetCommand extends Command
@@ -32,6 +33,7 @@ class GreetCommand extends Command
             ->addArgument('name', InputArgument::OPTIONAL, 'Who do you want to greet?')
             ->addOption('yell', null, InputOption::VALUE_NONE, 'If set, the task will yell in uppercase letters');
     }
+
     /**
      * {@inheritDoc}
      */

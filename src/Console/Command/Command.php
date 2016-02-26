@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -12,6 +11,7 @@
 namespace Lemon\Cli\Console\Command;
 
 use Symfony\Component\Console\Command\Command as BaseCommand;
+use Lemon\Cli\Console\ContainerAwareInterface;
 
 /**
  * Abstract class for commands
@@ -22,24 +22,28 @@ abstract class Command extends BaseCommand
     /**
      * Get application container
      *
-     * @return \Pimple\Container
+     * @return \Pimple\Container|null
      */
     public function getContainer()
     {
-        $this->getApplication()->getContainer();
+        $app = $this->getApplication();
+
+        return ($app instanceof ContainerAwareInterface) ? $app->getContainer() : null;
     }
 
     /**
+     * Get service in container
+     *
      * Returns a service contained in the application container or null if none
      * is found with that name.
      *
      * @param string $name Name of service
      * @return mixed
      */
-    public function detService($name)
+    public function getService($name)
     {
         $container = $this->getContainer();
 
-        return isset($container[$name]) ? $container[$name] : null;
+        return !is_null($container) && isset($container[$name]) ? $container[$name] : null;
     }
 }

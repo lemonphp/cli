@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team

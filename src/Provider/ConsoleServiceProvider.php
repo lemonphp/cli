@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -15,6 +14,11 @@ use Lemon\Cli\Console\ContainerAwareApplication;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
+/**
+ * Class ConsoleServiceprovider
+ *
+ * Registers ContainerAwareApplication and related services with the Pimple Container
+ */
 class ConsoleServiceProvider implements ServiceProviderInterface
 {
 
@@ -25,7 +29,7 @@ class ConsoleServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple)
     {
-        $pimple['console'] = function($pimple) {
+        $pimple['console'] = function ($pimple) {
             $console = new ContainerAwareApplication($pimple['console.name'], $pimple['console.version']);
             $console->setDispatcher($pimple['dispatcher']);
             $console->setContainer($pimple);

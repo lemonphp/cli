@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -49,6 +48,15 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(\Pimple\Container::class, $this->app);
 
+        $ref = new \ReflectionClass(get_class($this->app));
+        $booted = $ref->getProperty('booted');
+        $booted->setAccessible(true);
+        $providers = $ref->getProperty('providers');
+        $providers->setAccessible(true);
+
+        $this->assertFalse($booted->getValue($this->app));
+        $this->assertCount(2, $providers->getValue($this->app));
+
         $this->assertArrayHasKey('console', $this->app);
         $this->assertArrayHasKey('console.name', $this->app);
         $this->assertArrayHasKey('console.version', $this->app);
@@ -68,7 +76,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $app = new \Lemon\Cli\App(self::NAME, self::VERSION, [
             'foo' => 'bar',
-            'baz' => function() {
+            'baz' => function () {
                 return new \DateTime();
             },
         ]);
@@ -91,6 +99,12 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $provider->expects($this->once())->method('register');
 
         $this->assertSame($this->app, $this->app->register($provider));
+
+        $ref = new \ReflectionProperty(get_class($this->app), 'providers');
+        $ref->setAccessible(true);
+        $providers = $ref->getValue($this->app);
+
+        $this->assertContains($provider, $providers);
     }
 
     /**
@@ -102,7 +116,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->app->register($provider, [
             'foo' => 'bar',
-            'baz' => function() {
+            'baz' => function () {
                 return new \DateTime();
             },
         ]);
@@ -118,7 +132,20 @@ class AppTest extends \PHPUnit_Framework_TestCase
      */
     public function testBoot()
     {
-        $this->markTestIncomplete('Test App::boot() method');
+        $ref = new \ReflectionProperty(get_class($this->app), 'booted');
+        $ref->setAccessible(true);
+        $fooProvider = new \Lemon\Cli\Tests\Stub\FooProvider();
+        $this->app->register($fooProvider);
+
+        $this->assertEquals(0, \Lemon\Cli\Tests\Stub\FooProvider::$called);
+
+        $this->app->boot();
+
+        $this->assertTrue($ref->getValue($this->app));
+        $this->assertEquals(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
+
+        $this->app->boot();
+        $this->assertEquals(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
     }
 
     /**

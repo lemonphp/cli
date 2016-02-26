@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -9,3 +8,30 @@
  * with this source code in the file LICENSE.
  */
 
+namespace Lemon\Cli\Tests\Console\Command;
+
+use Symfony\Component\Console\Tester\CommandTester;
+use Lemon\Cli\Console\Command\GreetCommand;
+
+/**
+ * Test GreetCommand
+ */
+class CommandTest extends \PHPUnit_Framework_TestCase
+{
+
+    /**
+     * Test `getContainer` method
+     */
+    public function testGetContainer()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * 
+     */
+    public function testGetService()
+    {
+        $this->markTestIncomplete();
+    }
+}

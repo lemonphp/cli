@@ -2,7 +2,9 @@
 #################################################
 /composer.lock
 /phpunit.xml
+/phpcs.xml
 /vendor
+/bin
 /build/logs
 
 # IDE and editor specific files #

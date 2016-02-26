@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -16,9 +15,10 @@ use Symfony\Component\Console\Application;
 
 /**
  * Class ContainerAwareApplication
+ *
  * Console application be able setted and getted container
  */
-class ContainerAwareApplication extends Application
+class ContainerAwareApplication extends Application implements ContainerAwareInterface
 {
     /**
      * @var \Pimple\Container
