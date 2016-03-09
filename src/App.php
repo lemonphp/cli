@@ -10,19 +10,19 @@
 
 namespace Lemon\Cli;
 
-use Lemon\Cli\Console\Command\Command;
-use Lemon\Cli\Provider\ConsoleServiceProvider;
-use Lemon\Cli\Provider\DispatcherServiceProvider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Lemon\Cli\Console\Command\Command;
+use Lemon\Cli\Provider\ConsoleServiceProvider;
+use Lemon\Cli\Provider\EventDispatcherServiceProvider;
 
 /**
  * Container main class
  */
-class App extends Container
+class App
 {
     /**
      * @var boolean
@@ -30,9 +30,14 @@ class App extends Container
     protected $booted = false;
 
     /**
-     * @var ServiceProviderInterface[]
+     * @var \Symfony\Component\EventDispatcher\EventSubscriberInterface[]
      */
-    protected $providers = [];
+    protected $eventSubscribers = [];
+
+    /**
+     * @var \Pimple\Container
+     */
+    protected $container;
 
     /**
      * Contructor
@@ -44,9 +49,9 @@ class App extends Container
      */
     public function __construct($name, $version = null, array $values = [])
     {
-        parent::__construct($values);
+        $this->container = new Container($values);
 
-        $this->register(new DispatcherServiceProvider());
+        $this->register(new EventDispatcherServiceProvider());
         $this->register(new ConsoleServiceProvider(), [
             'console.name'    => $name,
             'console.version' => $version,
@@ -62,8 +67,11 @@ class App extends Container
      */
     public function register(ServiceProviderInterface $provider, array $values = [])
     {
-        parent::register($provider, $values);
-        $this->providers[] = $provider;
+        $this->container->register($provider, $values);
+        // register event subcriber
+        if ($provider instanceof EventSubscriberInterface) {
+            $this->eventSubscribers[] = $provider;
+        }
 
         return $this;
     }
@@ -74,17 +82,15 @@ class App extends Container
      *
      * @return void
      */
-    public function boot()
+    protected function boot()
     {
         if ($this->booted) {
             return;
         }
 
         $this->booted = true;
-        foreach ($this->providers as $provider) {
-            if ($provider instanceof EventSubscriberInterface) {
-                $this['dispatcher']->addSubscriber($provider);
-            }
+        foreach ($this->eventSubscribers as $subscriber) {
+            $this->container['event-dispatcher']->addSubscriber($subscriber);
         }
     }
 
@@ -99,7 +105,7 @@ class App extends Container
     {
         $this->boot();
 
-        return $this['console']->run($input, $output);
+        return $this->container['console']->run($input, $output);
     }
 
     /**
@@ -108,6 +114,6 @@ class App extends Container
      */
     public function addCommand(Command $command)
     {
-        $this['console']->add($command);
+        $this->container['console']->add($command);
     }
 }

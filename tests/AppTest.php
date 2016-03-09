@@ -46,27 +46,30 @@ class AppTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructor()
     {
-        $this->assertInstanceOf(\Pimple\Container::class, $this->app);
-
         $ref = new \ReflectionClass(get_class($this->app));
         $booted = $ref->getProperty('booted');
         $booted->setAccessible(true);
-        $providers = $ref->getProperty('providers');
-        $providers->setAccessible(true);
+        $subscribers = $ref->getProperty('eventSubscribers');
+        $subscribers->setAccessible(true);
+        $container = $ref->getProperty('container');
+        $container->setAccessible(true);
+
+        $con = $container->getValue($this->app);
 
         $this->assertFalse($booted->getValue($this->app));
-        $this->assertCount(2, $providers->getValue($this->app));
+        $this->assertCount(0, $subscribers->getValue($this->app));
+        $this->assertInstanceOf(\Pimple\Container::class, $con);
 
-        $this->assertArrayHasKey('console', $this->app);
-        $this->assertArrayHasKey('console.name', $this->app);
-        $this->assertArrayHasKey('console.version', $this->app);
-        $this->assertArrayHasKey('dispatcher', $this->app);
+        $this->assertArrayHasKey('console', $con);
+        $this->assertArrayHasKey('console.name', $con);
+        $this->assertArrayHasKey('console.version', $con);
+        $this->assertArrayHasKey('event-dispatcher', $con);
 
-        $this->assertInstanceOf(\Symfony\Component\Console\Application::class, $this->app['console']);
-        $this->assertInstanceOf(\Symfony\Component\EventDispatcher\EventDispatcher::class, $this->app['dispatcher']);
+        $this->assertInstanceOf(\Symfony\Component\Console\Application::class, $con['console']);
+        $this->assertInstanceOf(\Symfony\Component\EventDispatcher\EventDispatcher::class, $con['event-dispatcher']);
 
-        $this->assertSame(self::NAME, $this->app['console']->getName());
-        $this->assertSame(self::VERSION, $this->app['console']->getVersion());
+        $this->assertSame(self::NAME, $con['console']->getName());
+        $this->assertSame(self::VERSION, $con['console']->getVersion());
     }
 
     /**
@@ -81,13 +84,18 @@ class AppTest extends \PHPUnit_Framework_TestCase
             },
         ]);
 
-        $this->assertArrayHasKey('foo', $app);
-        $this->assertArrayHasKey('baz', $app);
+        $container = new \ReflectionProperty(get_class($app), 'container');
+        $container->setAccessible(true);
 
-        $this->assertArrayNotHasKey('abc', $app);
+        $con = $container->getValue($app);
 
-        $this->assertSame('bar', $app['foo']);
-        $this->assertInstanceOf(\DateTime::class, $app['baz']);
+        $this->assertArrayHasKey('foo', $con);
+        $this->assertArrayHasKey('baz', $con);
+
+        $this->assertArrayNotHasKey('abc', $con);
+
+        $this->assertSame('bar', $con['foo']);
+        $this->assertInstanceOf(\DateTime::class, $con['baz']);
     }
 
     /**
@@ -99,12 +107,23 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $provider->expects($this->once())->method('register');
 
         $this->assertSame($this->app, $this->app->register($provider));
+    }
 
-        $ref = new \ReflectionProperty(get_class($this->app), 'providers');
+    /**
+     * Test register event subscriber without values
+     */
+    public function testRegisterWithEventSubscriber()
+    {
+        $provider = new \Lemon\Cli\Tests\Stub\FooProvider();
+
+        $this->app->register($provider);
+        $ref = new \ReflectionProperty(get_class($this->app), 'eventSubscribers');
         $ref->setAccessible(true);
-        $providers = $ref->getValue($this->app);
 
-        $this->assertContains($provider, $providers);
+        $subscribers = $ref->getValue($this->app);
+
+        $this->assertCount(1, $subscribers);
+        $this->assertContains($provider, $subscribers);
     }
 
     /**
@@ -121,10 +140,15 @@ class AppTest extends \PHPUnit_Framework_TestCase
             },
         ]);
 
-        $this->assertArrayHasKey('foo', $this->app);
-        $this->assertArrayHasKey('baz', $this->app);
-        $this->assertSame('bar', $this->app['foo']);
-        $this->assertInstanceOf(\DateTime::class, $this->app['baz']);
+        $ref = new \ReflectionProperty(get_class($this->app), 'container');
+        $ref->setAccessible(true);
+
+        $container = $ref->getValue($this->app);
+
+        $this->assertArrayHasKey('foo', $container);
+        $this->assertArrayHasKey('baz', $container);
+        $this->assertSame('bar', $container['foo']);
+        $this->assertInstanceOf(\DateTime::class, $container['baz']);
     }
 
     /**
@@ -132,19 +156,25 @@ class AppTest extends \PHPUnit_Framework_TestCase
      */
     public function testBoot()
     {
-        $ref = new \ReflectionProperty(get_class($this->app), 'booted');
-        $ref->setAccessible(true);
+        $ref = new \ReflectionClass($this->app);
+        $booted = $ref->getProperty('booted');
+        $boot   = $ref->getMethod('boot');
+
+        $booted->setAccessible(true);
+        $boot->setAccessible(true);
+
         $fooProvider = new \Lemon\Cli\Tests\Stub\FooProvider();
         $this->app->register($fooProvider);
 
+        $this->assertFalse($booted->getValue($this->app));
         $this->assertEquals(0, \Lemon\Cli\Tests\Stub\FooProvider::$called);
 
-        $this->app->boot();
+        $boot->invoke($this->app);
 
-        $this->assertTrue($ref->getValue($this->app));
+        $this->assertTrue($booted->getValue($this->app));
         $this->assertEquals(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
 
-        $this->app->boot();
+        $boot->invoke($this->app);
         $this->assertEquals(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
     }
 
@@ -156,8 +186,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $input  = $this->getMock(\Symfony\Component\Console\Input\InputInterface::class);
         $output = $this->getMock(\Symfony\Component\Console\Output\OutputInterface::class);
 
-        $this->app['console'] = $this->getMock(\Symfony\Component\Console\Application::class);
-        $this->app['console']->expects($this->once())->method('run')->with($input, $output);
+        $ref = new \ReflectionProperty(get_class($this->app), 'container');
+        $ref->setAccessible(true);
+        $container = $ref->getValue($this->app);
+
+        $container['console'] = $this->getMock(\Symfony\Component\Console\Application::class);
+        $container['console']->expects($this->once())->method('run')->with($input, $output);
+
+        $ref->setValue($this->app, $container);
 
         $this->app->run($input, $output);
     }
@@ -169,7 +205,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $this->app->addCommand(new \Lemon\Cli\Console\Command\GreetCommand());
 
-        $this->assertTrue($this->app['console']->has('demo:greet'));
-        $this->assertFalse($this->app['console']->has('demo:echo'));
+        $ref = new \ReflectionProperty(get_class($this->app), 'container');
+        $ref->setAccessible(true);
+        $container = $ref->getValue($this->app);
+
+        $this->assertTrue($container['console']->has('demo:greet'));
+        $this->assertFalse($container['console']->has('demo:echo'));
     }
 }

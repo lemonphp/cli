@@ -10,9 +10,9 @@
 
 namespace Lemon\Cli\Provider;
 
-use Lemon\Cli\Console\ContainerAwareApplication;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Lemon\Cli\Console\ContainerAwareApplication;
 
 /**
  * Class ConsoleServiceprovider
@@ -31,7 +31,7 @@ class ConsoleServiceProvider implements ServiceProviderInterface
     {
         $pimple['console'] = function ($pimple) {
             $console = new ContainerAwareApplication($pimple['console.name'], $pimple['console.version']);
-            $console->setDispatcher($pimple['dispatcher']);
+            $console->setDispatcher($pimple['event-dispatcher']);
             $console->setContainer($pimple);
 
             return $console;

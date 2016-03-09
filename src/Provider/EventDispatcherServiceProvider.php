@@ -15,11 +15,11 @@ use Pimple\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * DispatcherServiceProvider
+ * EventDispatcherServiceProvider
  *
  * Registers EventDispatcher and related services with the Pimple Container
  */
-class DispatcherServiceProvider implements ServiceProviderInterface
+class EventDispatcherServiceProvider implements ServiceProviderInterface
 {
 
     /**
@@ -29,7 +29,7 @@ class DispatcherServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple)
     {
-        $pimple['dispatcher'] = function () {
+        $pimple['event-dispatcher'] = function () {
             return new EventDispatcher();
         };
     }
