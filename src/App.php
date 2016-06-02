@@ -22,6 +22,9 @@ use Lemon\Cli\Provider\EventDispatcherServiceProvider;
 
 /**
  * Container main class
+ *
+ * @property-read \Lemon\Cli\Console\ContainerAwareApplication       $console
+ * @property-read \Symfony\Component\EventDispatcher\EventDispatcher $eventDispatcher
  */
 class App
 {
@@ -60,6 +63,22 @@ class App
     }
 
     /**
+     * Getting a non-existant property on App checks to see if there's an item
+     * in the container, gets it.
+     *
+     * @param type $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (isset($this->container[$name])) {
+            return $this->container[$name];
+        }
+
+        throw new \RuntimeException('Getting a non-existant property on ' . self::class);
+    }
+
+    /**
      * Registers a service provider.
      *
      * @param \Pimple\ServiceProviderInterface $provider A ServiceProviderInterface instance
@@ -91,7 +110,7 @@ class App
 
         $this->booted = true;
         foreach ($this->eventSubscribers as $subscriber) {
-            $this->container['event-dispatcher']->addSubscriber($subscriber);
+            $this->container['eventDispatcher']->addSubscriber($subscriber);
         }
     }
 

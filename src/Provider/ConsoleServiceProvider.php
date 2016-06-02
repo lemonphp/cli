@@ -32,7 +32,7 @@ class ConsoleServiceProvider implements ServiceProviderInterface
     {
         $pimple['console'] = function ($pimple) {
             $console = new ContainerAwareApplication($pimple['console.name'], $pimple['console.version']);
-            $console->setDispatcher($pimple['event-dispatcher']);
+            $console->setDispatcher($pimple['eventDispatcher']);
             $console->setContainer($pimple);
 
             return $console;

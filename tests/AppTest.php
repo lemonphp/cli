@@ -64,10 +64,10 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('console', $con);
         $this->assertArrayHasKey('console.name', $con);
         $this->assertArrayHasKey('console.version', $con);
-        $this->assertArrayHasKey('event-dispatcher', $con);
+        $this->assertArrayHasKey('eventDispatcher', $con);
 
         $this->assertInstanceOf(\Symfony\Component\Console\Application::class, $con['console']);
-        $this->assertInstanceOf(\Symfony\Component\EventDispatcher\EventDispatcher::class, $con['event-dispatcher']);
+        $this->assertInstanceOf(\Symfony\Component\EventDispatcher\EventDispatcher::class, $con['eventDispatcher']);
 
         $this->assertSame(self::NAME, $con['console']->getName());
         $this->assertSame(self::VERSION, $con['console']->getVersion());
@@ -97,6 +97,26 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame('bar', $con['foo']);
         $this->assertInstanceOf(\DateTime::class, $con['baz']);
+    }
+
+    /**
+     * Test get a non-existant property
+     */
+    public function testGetNonExistantProperty()
+    {
+        $ref = new \ReflectionProperty(get_class($this->app), 'container');
+        $ref->setAccessible(true);
+
+        $container = $ref->getValue($this->app);
+
+        $this->assertSame($container['console'], $this->app->console);
+
+        $this->setExpectedException(
+            \RuntimeException::class,
+            'Getting a non-existant property on ' . \Lemon\Cli\App::class
+        );
+
+        $this->app->nonExistantProperty;
     }
 
     /**

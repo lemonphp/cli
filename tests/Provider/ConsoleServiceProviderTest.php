@@ -29,7 +29,7 @@ class ConsoleServiceProviderTest extends \PHPUnit_Framework_TestCase
         $container = new Container();
         $container['console.name'] = 'Test app';
         $container['console.version'] = '1.0.0';
-        $container['event-dispatcher'] = function () {
+        $container['eventDispatcher'] = function () {
             return new EventDispatcher();
         };
 

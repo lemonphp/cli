@@ -30,7 +30,7 @@ class EventDispatcherServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple)
     {
-        $pimple['event-dispatcher'] = function () {
+        $pimple['eventDispatcher'] = function () {
             return new EventDispatcher();
         };
     }

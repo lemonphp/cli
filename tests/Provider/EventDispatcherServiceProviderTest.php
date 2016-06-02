@@ -27,12 +27,12 @@ class EventDispatcherServiceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $container = new Container();
 
-        $this->assertFalse(isset($container['event-dispatcher']));
+        $this->assertFalse(isset($container['eventDispatcher']));
 
         $provider = new EventDispatcherServiceProvider();
         $provider->register($container);
 
-        $this->assertTrue(isset($container['event-dispatcher']));
-        $this->assertInstanceOf(EventDispatcher::class, $container['event-dispatcher']);
+        $this->assertTrue(isset($container['eventDispatcher']));
+        $this->assertInstanceOf(EventDispatcher::class, $container['eventDispatcher']);
     }
 }
