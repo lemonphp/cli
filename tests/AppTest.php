@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -167,15 +168,15 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->app->register($fooProvider);
 
         $this->assertFalse($booted->getValue($this->app));
-        $this->assertEquals(0, \Lemon\Cli\Tests\Stub\FooProvider::$called);
+        $this->assertSame(0, \Lemon\Cli\Tests\Stub\FooProvider::$called);
 
         $boot->invoke($this->app);
 
         $this->assertTrue($booted->getValue($this->app));
-        $this->assertEquals(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
+        $this->assertSame(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
 
         $boot->invoke($this->app);
-        $this->assertEquals(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
+        $this->assertSame(1, \Lemon\Cli\Tests\Stub\FooProvider::$called);
     }
 
     /**

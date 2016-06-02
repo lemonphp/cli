@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -26,8 +27,8 @@ class GreetCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new GreetCommand();
 
-        $this->assertEquals('demo:greet', $command->getName());
-        $this->assertEquals('Greet someone', $command->getDescription());
+        $this->assertSame('demo:greet', $command->getName());
+        $this->assertSame('Greet someone', $command->getDescription());
         $this->assertTrue($command->getDefinition()->hasArgument('name'));
         $this->assertTrue($command->getDefinition()->hasOption('yell'));
     }
@@ -41,8 +42,8 @@ class GreetCommandTest extends \PHPUnit_Framework_TestCase
         $tester = new CommandTester($command);
 
         $tester->execute(['name' => $name, '--yell' => $yell]);
-        $this->assertEquals(0, $tester->getStatusCode());
-        $this->assertEquals($expected, $tester->getDisplay());
+        $this->assertSame(0, $tester->getStatusCode());
+        $this->assertSame($expected, $tester->getDisplay());
     }
 
     /**

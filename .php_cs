@@ -17,7 +17,7 @@ return Symfony\CS\Config\Config::create()
     ->fixers(array(
         'header_comment',
         'short_array_syntax',
-        'ordered_use',
+        //'ordered_use',
         'php_unit_construct',
         'php_unit_strict',
         'strict',

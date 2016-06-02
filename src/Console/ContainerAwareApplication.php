@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -23,7 +24,7 @@ class ContainerAwareApplication extends Application implements ContainerAwareInt
     /**
      * @var \Pimple\Container
      */
-    protected $pimple;
+    protected $container;
 
     /**
      * Sets a pimple instance onto this application.
@@ -32,9 +33,9 @@ class ContainerAwareApplication extends Application implements ContainerAwareInt
      *
      * @return void
      */
-    public function setContainer(Container $pimple)
+    public function setContainer(Container $container)
     {
-        $this->pimple = $pimple;
+        $this->container = $container;
     }
 
     /**
@@ -44,6 +45,6 @@ class ContainerAwareApplication extends Application implements ContainerAwareInt
      */
     public function getContainer()
     {
-        return $this->pimple;
+        return $this->container;
     }
 }

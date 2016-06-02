@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * This file is part of `lemonphp/cli` project.
  *
  * (c) 2015-2016 LemonPHP Team
@@ -26,7 +27,7 @@ class ContainerAwareApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $container = new Container();
         $app = new ContainerAwareApplication();
-        $ref = new \ReflectionProperty(get_class($app), 'pimple');
+        $ref = new \ReflectionProperty(get_class($app), 'container');
         $ref->setAccessible(true);
         // Check before set
         $this->assertNull($ref->getValue($app));
@@ -42,7 +43,7 @@ class ContainerAwareApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $container = new Container();
         $app = new ContainerAwareApplication();
-        $ref = new \ReflectionProperty(get_class($app), 'pimple');
+        $ref = new \ReflectionProperty(get_class($app), 'container');
         $ref->setAccessible(true);
         $ref->setValue($app, $container);
 
