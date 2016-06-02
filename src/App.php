@@ -16,7 +16,7 @@ use Pimple\ServiceProviderInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Lemon\Cli\Console\Command\Command;
+use Symfony\Component\Console\Command\Command;
 use Lemon\Cli\Provider\ConsoleServiceProvider;
 use Lemon\Cli\Provider\EventDispatcherServiceProvider;
 

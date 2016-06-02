@@ -213,4 +213,18 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container['console']->has('demo:greet'));
         $this->assertFalse($container['console']->has('demo:echo'));
     }
+
+    /**
+     * Test allow add an instance of \Symfony\Component\Console\Command\Command
+     */
+    public function testAllowAddSymfonyCommand()
+    {
+        $this->app->addCommand(new \Symfony\Component\Console\Command\Command('demo:greet'));
+
+        $ref = new \ReflectionProperty(get_class($this->app), 'container');
+        $ref->setAccessible(true);
+        $container = $ref->getValue($this->app);
+
+        $this->assertTrue($container['console']->has('demo:greet'));
+    }
 }
